@@ -1,0 +1,47 @@
+{
+  "name": "tarachat",
+  "version": "0.0.1",
+  "description": "Course Project for Computer Network",
+  "productName": "Tara-Chat",
+  "cordovaId": "org.cordova.quasar.app",
+  "author": "Taraxacum <john980118@163.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue src",
+    "fix": "eslint --fix --ext .js,.vue src",
+    "start": "eslint --fix --ext .js,.vue src && quasar dev -m electron -t ios",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "jdenticon": "^2.1.0",
+    "log4js": "^3.0.6"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "devtron": "^1.4.0",
+    "electron": "^3.0.8",
+    "electron-debug": "^2.0.0",
+    "electron-devtools-installer": "^2.2.4",
+    "eslint": "^5.0.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "eslint-plugin-vue": "^5.0.0",
+    "quasar-cli": "^0.17.0",
+    "strip-ansi": "=3.0.1"
+  },
+  "engines": {
+    "node": ">= 8.9.0",
+    "npm": ">= 5.6.0",
+    "yarn": ">= 1.6.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}
