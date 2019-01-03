@@ -1,6 +1,5 @@
 const { ipcMain } = require('electron')
 const crypto = require('crypto')
-
 const tarasocket = require('./socket')
 
 ipcMain.on('request.auth.register', (event, arg) => {

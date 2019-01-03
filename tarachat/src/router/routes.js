@@ -1,19 +1,25 @@
 const routes = [
   {
     path: '/',
-    redirect: '/login'
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('pages/auth/Login.vue')
-    // children: [{ path: '', component: () => import('pages/Index.vue') }]
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import('pages/auth/Register.vue')
-    // children: [{ path: '', component: () => import('pages/Index.vue') }]
+    component: () => import('layouts/BrandLayout.vue'),
+    children: [
+      {
+        path: '',
+        redirect: '/login'
+      },
+      {
+        path: '/login',
+        name: 'Login',
+        component: () => import('pages/auth/Login.vue')
+        // children: [{ path: '', component: () => import('pages/Index.vue') }]
+      },
+      {
+        path: '/register',
+        name: 'Register',
+        component: () => import('pages/auth/Register.vue')
+        // children: [{ path: '', component: () => import('pages/Index.vue') }]
+      }
+    ]
   },
   {
     path: '/app',

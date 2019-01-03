@@ -43,5 +43,4 @@ app.on('activate', () => {
   }
 })
 
-require('./avatar')
-require('./auth')
+require('../services/index')
