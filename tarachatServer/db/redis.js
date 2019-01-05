@@ -4,8 +4,8 @@ const logger = require('log4js').getLogger('redis')
 logger.level = 'debug'
 
 module.exports = {
-    redisTask(task) {
-        const client = redis.createClient(REDIS)
+  redisTask(task) {
+    const client = redis.createClient(REDIS)
 
     client.on('error', err => {
       logger.error(err)
@@ -16,19 +16,19 @@ module.exports = {
       task(client)
       client.quit(this.sampleCallback)
     })
-    },
-    sampleCallback(err, reply) {
-        if (err) {
-            logger.error(err)
-        } else {
-            logger.info(reply)
-        }
-    },
-    sampleTask(client) {
-        client.set('test', 'hello', this.sampleCallback)
-        client.get('test', this.sampleCallback)
-        client.quit(this.sampleCallback)
+  },
+  sampleCallback(err, reply) {
+    if (err) {
+      logger.error(err)
+    } else {
+      logger.info(reply)
     }
+  },
+  sampleTask(client) {
+    client.set('test', 'hello', this.sampleCallback)
+    client.get('test', this.sampleCallback)
+    client.quit(this.sampleCallback)
+  }
 }
 
 // redisTask(sample);
