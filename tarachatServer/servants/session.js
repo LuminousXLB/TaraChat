@@ -1,4 +1,5 @@
 const { redisTask, sampleCallback } = require('../db/redis')
+const { successResponse, failResponse } = require('./common')
 const crypto = require('crypto')
 const logger = require('log4js').getLogger(__filename)
 logger.level = 'debug'
@@ -20,12 +21,6 @@ module.exports = {
     })
 
     logger.info('Response session.create')
-    socket.write(
-      JSON.stringify({
-        success: 1,
-        action: action,
-        payload: { sessionid }
-      })
-    )
+    socket.write(successResponse(action, { sessionid }))
   }
 }

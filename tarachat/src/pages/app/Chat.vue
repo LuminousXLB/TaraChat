@@ -18,7 +18,7 @@
 </style>
 
 <script>
-import { avatar } from 'src/utils/avatar.js'
+import { Avatar } from 'src/utils/avatar.js'
 
 export default {
   name: 'Chat',
@@ -26,14 +26,13 @@ export default {
     return {
       avatarMe: '',
       text: [
-        '<span style="color: red">hunter2</span><br>hunter3'
+        'hunter3'
       ],
       input: ''
     }
   },
   created () {
-    const size = 200
-    avatar('me', size).then(({ uri, arg }) => {
+    Avatar('me').then(({ uri, arg }) => {
       this.avatarMe = uri
     })
   }

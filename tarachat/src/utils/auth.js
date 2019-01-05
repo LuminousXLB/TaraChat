@@ -1,8 +1,7 @@
-// const { ipcRenderer } = require('electron')
-import stdIpcCommunication from './common.js'
+import ipcCommonClient from './common.js'
 
 export const Register = ({ nickname, email, password }) =>
-  stdIpcCommunication(
+  ipcCommonClient(
     {
       requestEventName: 'request.auth.register',
       responseEventName: 'response.auth.register'
@@ -11,7 +10,7 @@ export const Register = ({ nickname, email, password }) =>
   )
 
 export const Login = ({ email, password }) =>
-  stdIpcCommunication(
+  ipcCommonClient(
     {
       requestEventName: 'request.auth.login',
       responseEventName: 'response.auth.login'
@@ -20,7 +19,7 @@ export const Login = ({ email, password }) =>
   )
 
 export const Logout = () =>
-  stdIpcCommunication({
+  ipcCommonClient({
     requestEventName: 'request.auth.logout',
     responseEventName: 'response.auth.logout'
   })

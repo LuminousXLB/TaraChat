@@ -3,40 +3,65 @@
     <div class="q-display-3">Login</div>
     <hr class="q-hr q-my-lg">
 
-    <q-input v-model="email" type="email" float-label="Email"/>
-    <q-input v-model="pwd" type="password" float-label="Password"/>
+    <q-field :error="$v.form.email.$error" error-label="Please type a valid email">
+      <q-input v-model="form.email" type="email" float-label="Email" @blur="$v.form.email.$touch"/>
+    </q-field>
+
+    <q-input v-model="form.password" type="password" float-label="Password"/>
 
     <hr class="q-hr q-my-lg">
 
     <div class="row justify-around">
       <q-btn color="primary" class="q-py-sm q-px-xl" label="Register" @click="routeRegister"/>
-      <q-btn color="primary" class="q-py-sm q-px-xl" label="Login" @click="Login"/>
+      <q-btn color="primary" class="q-py-sm q-px-xl" label="Login" @click="submit"/>
     </div>
   </q-page>
 </template>
 
 <script>
 import { Login } from 'src/utils/auth.js'
+import { required, email } from 'vuelidate/lib/validators'
 
 export default {
   name: 'Login',
   data: function () {
     return {
-      email: 'username@example.com',
-      pwd: 'sdf'
+      form: {
+        email: 'username@example.com',
+        password: 'sdf'
+      }
+    }
+  },
+  validations: {
+    form: {
+      email: { required, email }
     }
   },
   methods: {
     routeRegister () {
       this.$router.push({ name: 'Register' })
     },
-    Login () {
-      const { email, password } = this
+    submit () {
+      this.$v.form.$touch()
+      if (this.$v.form.$error) {
+        this.$q.notify('Please review fields again.')
+        return
+      }
+
+      const { email, password } = this.form
       Login({ email, password }).then(({ nickname }) => {
-        alert(nickname)
+        this.$q.sessionStorage.set('nickname', nickname)
         this.$router.push({ name: 'Chat' })
       }).catch(error => {
-        alert(error)
+        this.$q.dialog({
+          title: 'Login Failed',
+          message: error,
+          color: 'negative',
+          ok: true,
+          preventClose: true
+        }).then(() => {
+          this.form.password = ''
+        })
       })
     }
   }

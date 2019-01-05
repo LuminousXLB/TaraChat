@@ -68,13 +68,11 @@ export default {
         this.$router.push({ name: 'Login' })
       }).catch(error => {
         this.$q.dialog({
-          title: 'Error',
+          title: 'Register Failed',
           message: error,
           color: 'negative',
           ok: true,
           preventClose: true
-          // stackButtons: true,
-          // position: 'top'
         })
       })
     }
