@@ -1,43 +1,26 @@
-const { ipcRenderer } = require('electron')
+// const { ipcRenderer } = require('electron')
+import stdIpcCommunication from './common.js'
 
-export function Register ({ nickname, email, password }) {
-  return new Promise((resolve, reject) => {
-    ipcRenderer.once('response.auth.register', (event, arg) => {
-      if (arg.success) {
-        resolve(arg)
-      } else {
-        reject(arg.error)
-      }
-    })
+export const Register = ({ nickname, email, password }) =>
+  stdIpcCommunication(
+    {
+      requestEventName: 'request.auth.register',
+      responseEventName: 'response.auth.register'
+    },
+    { nickname, email, password }
+  )
 
-    ipcRenderer.send('request.auth.register', { nickname, email, password })
+export const Login = ({ email, password }) =>
+  stdIpcCommunication(
+    {
+      requestEventName: 'request.auth.login',
+      responseEventName: 'response.auth.login'
+    },
+    { email, password }
+  )
+
+export const Logout = () =>
+  stdIpcCommunication({
+    requestEventName: 'request.auth.logout',
+    responseEventName: 'response.auth.logout'
   })
-}
-
-export function Login (email, password) {
-  return new Promise((resolve, reject) => {
-    ipcRenderer.once('response.auth.login', (event, arg) => {
-      if (arg.success) {
-        resolve(arg)
-      } else {
-        reject(arg.error)
-      }
-    })
-
-    ipcRenderer.send('request.auth.login', { email, password })
-  })
-}
-
-export function Logout () {
-  return new Promise((resolve, reject) => {
-    ipcRenderer.once('response.auth.logout', (event, arg) => {
-      if (arg.success) {
-        resolve(arg)
-      } else {
-        reject(arg.error)
-      }
-    })
-
-    ipcRenderer.send('request.auth.logout')
-  })
-}

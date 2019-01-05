@@ -63,7 +63,7 @@ module.exports = function (ctx) {
       ],
       directives: ['Ripple'],
       // Quasar plugins
-      plugins: ['Notify']
+      plugins: ['Notify', 'Dialog']
       // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
       // i18n: 'de' // Quasar language
     },

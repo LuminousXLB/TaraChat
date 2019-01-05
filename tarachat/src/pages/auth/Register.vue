@@ -1,27 +1,19 @@
 <template>
-  <q-layout>
-    <q-page-container>
-      <q-page :padding="true">
-        <div class="q-display-3">Register</div>
-        <hr class="q-hr q-my-lg">
+  <q-page :padding="true">
+    <div class="q-display-3">Register</div>
+    <hr class="q-hr q-my-lg">
 
-        <q-input v-model="nickname" type="text" float-label="Nickname"/>
-        <q-input v-model="email" type="email" float-label="Email"/>
-        <q-input v-model="password" type="password" float-label="Password"/>
+    <q-input v-model="nickname" type="text" float-label="Nickname"/>
+    <q-input v-model="email" type="email" float-label="Email"/>
+    <q-input v-model="password" type="password" float-label="Password"/>
 
-        <hr class="q-hr q-my-lg">
+    <hr class="q-hr q-my-lg">
 
-        <div class="row justify-around">
-          <q-btn color="primary" class="q-py-sm q-px-xl" label="Go Back" @click="routeLogin"/>
-          <q-btn color="primary" class="q-py-sm q-px-xl" label="Submit" @click="Register"/>
-        </div>
-      </q-page>
-    </q-page-container>
-
-    <!-- <q-page-container>
-      <router-view />
-    </q-page-container>-->
-  </q-layout>
+    <div class="row justify-around">
+      <q-btn color="primary" class="q-py-sm q-px-xl" label="Go Back" @click="routeLogin"/>
+      <q-btn color="primary" class="q-py-sm q-px-xl" label="Submit" @click="Register"/>
+    </div>
+  </q-page>
 </template>
 
 <script>
@@ -43,10 +35,23 @@ export default {
     Register () {
       const { nickname, email, password } = this
       Register({ nickname, email, password }).then(() => {
-        alert('success')
+        this.$q.notify({
+          message: `Register Success`,
+          timeout: 1500,
+          type: 'positive',
+          position: 'bottom-right'
+        })
         this.$router.push({ name: 'Login' })
       }).catch(error => {
-        alert(error)
+        this.$q.dialog({
+          title: 'Error',
+          message: error,
+          color: 'negative',
+          ok: true,
+          preventClose: true
+          // stackButtons: true,
+          // position: 'top'
+        })
       })
     }
   }

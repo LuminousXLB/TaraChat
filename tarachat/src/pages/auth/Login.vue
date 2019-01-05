@@ -1,26 +1,18 @@
 <template>
-  <q-layout>
-    <q-page-container>
-      <q-page :padding="true">
-        <div class="q-display-3">Login</div>
-        <hr class="q-hr q-my-lg">
+  <q-page :padding="true">
+    <div class="q-display-3">Login</div>
+    <hr class="q-hr q-my-lg">
 
-        <q-input v-model="email" type="email" float-label="Email"/>
-        <q-input v-model="pwd" type="password" float-label="Password"/>
+    <q-input v-model="email" type="email" float-label="Email"/>
+    <q-input v-model="pwd" type="password" float-label="Password"/>
 
-        <hr class="q-hr q-my-lg">
+    <hr class="q-hr q-my-lg">
 
-        <div class="row justify-around">
-          <q-btn color="primary" class="q-py-sm q-px-xl" label="Register" @click="routeRegister"/>
-          <q-btn color="primary" class="q-py-sm q-px-xl" label="Login" @click="Login"/>
-        </div>
-      </q-page>
-    </q-page-container>
-
-    <!-- <q-page-container>
-      <router-view />
-    </q-page-container>-->
-  </q-layout>
+    <div class="row justify-around">
+      <q-btn color="primary" class="q-py-sm q-px-xl" label="Register" @click="routeRegister"/>
+      <q-btn color="primary" class="q-py-sm q-px-xl" label="Login" @click="Login"/>
+    </div>
+  </q-page>
 </template>
 
 <script>
@@ -39,8 +31,8 @@ export default {
       this.$router.push({ name: 'Register' })
     },
     Login () {
-      console.log('login clicked')
-      Login(this.email, this.pwd).then(({ nickname }) => {
+      const { email, password } = this
+      Login({ email, password }).then(({ nickname }) => {
         alert(nickname)
         this.$router.push({ name: 'Chat' })
       }).catch(error => {

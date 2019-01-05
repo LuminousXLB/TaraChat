@@ -1,15 +1,11 @@
-const { ipcRenderer } = require('electron')
+// const { ipcRenderer } = require('electron')
+import stdIpcCommunication from './common.js'
 
-export function avatar (identity, size) {
-  return new Promise((resolve, reject) => {
-    ipcRenderer.once('response.avatar', (event, arg) => {
-      if (arg.success) {
-        resolve(arg)
-      } else {
-        reject(arg.error)
-      }
-    })
-
-    ipcRenderer.send('request.avatar', { identity, size })
-  })
-}
+export const avatar = (identity, size) =>
+  stdIpcCommunication(
+    {
+      requestEventName: 'request.avatar',
+      responseEventName: 'response.avatar'
+    },
+    { identity, size }
+  )
