@@ -18,6 +18,7 @@ module.exports = {
       client.expire(`session:${sessionid}`, 60 * 30, sampleCallback)
     })
 
+    logger.info('Response session.create')
     socket.write(
       JSON.stringify({
         success: 1,

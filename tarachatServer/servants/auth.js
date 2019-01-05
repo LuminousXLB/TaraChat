@@ -17,7 +17,6 @@ module.exports = {
           })
         )
       } else {
-        console.log(    )
         socket.write(
           JSON.stringify({
             success: 1,
@@ -28,6 +27,20 @@ module.exports = {
       }
     })
   },
-  'auth.login': (socket, action, timestamp, sessionid, payload) => {},
-  'auth.logout': (socket, action, timestamp, sessionid, payload) => {}
+  'auth.login': (socket, action, timestamp, sessionid, payload) => {
+    socket.write(
+      JSON.stringify({
+        success: 1,
+        action: action
+      })
+    )
+  },
+  'auth.logout': (socket, action, timestamp, sessionid, payload) => {
+    socket.write(
+      JSON.stringify({
+        success: 1,
+        action: action
+      })
+    )
+  }
 }

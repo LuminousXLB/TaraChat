@@ -1,13 +1,16 @@
 <template>
   <q-page class="flex">
-    <q-list class="fit">
-      <q-item class="justify-end">
-        <q-chat-message class="" name="me" :avatar="avatarMe" :text="text" stamp="4 minutes ago" sent/>
-      </q-item>
-      <q-item class="justify-start">
+    <q-scroll-area style="flex: 1">
+      <div class="fit">
+        <q-chat-message name="me" :avatar="avatarMe" :text="text" stamp="4 minutes ago" sent/>
+        <q-chat-message name="me" :avatar="avatarMe" :text="text" stamp="4 minutes ago" sent/>
+        <q-chat-message label="This is a label"/>
+        <q-chat-message name="me" :avatar="avatarMe" :text="text" stamp="4 minutes ago" sent/>
         <q-chat-message name="me" :avatar="avatarMe" :text="text" stamp="4 minutes ago"/>
-      </q-item>
-    </q-list>
+        <q-chat-message name="me" :avatar="avatarMe" :text="text" stamp="4 minutes ago" sent/>
+        <q-chat-message name="me" :avatar="avatarMe" :text="text" stamp="4 minutes ago"/>
+      </div>
+    </q-scroll-area>
   </q-page>
 </template>
 
@@ -24,7 +27,8 @@ export default {
       avatarMe: '',
       text: [
         '<span style="color: red">hunter2</span><br>hunter3'
-      ]
+      ],
+      input: ''
     }
   },
   created () {

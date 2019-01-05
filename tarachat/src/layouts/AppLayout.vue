@@ -1,25 +1,21 @@
 <template>
-  <q-layout view="hHh Lpr lFf">
+  <q-layout view="hHh LpR lFf">
     <q-layout-header>
       <q-toolbar color="primary" :glossy="$q.theme === 'mat'" :inverted="$q.theme === 'ios'">
-        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu">
+        <!-- <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu">
           <q-icon name="menu"/>
-        </q-btn>
-
+        </q-btn>-->
         <q-toolbar-title>Tara Chat
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
 
-        <q-btn flat round dense @click="Logout">
+        <q-btn flat round dense @click="Logout" title="Logout">
           <q-icon name="ion-ios-log-out"/>
         </q-btn>
       </q-toolbar>
     </q-layout-header>
 
-    <q-layout-drawer
-      v-model="leftDrawerOpen"
-      :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
-    >
+    <q-layout-drawer v-model="leftDrawerOpen">
       <q-list no-border link inset-delimiter>
         <q-list-header>Friends</q-list-header>
         <q-item @click.native="openURL('http://quasar-framework.org')">
@@ -48,6 +44,23 @@
     <q-page-container>
       <router-view/>
     </q-page-container>
+
+    <q-layout-footer>
+      <q-editor
+        v-model="input"
+        :toolbar="[
+          ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript', 'removeFormat'],
+          ['token', 'hr', 'link'],
+          ['p', 'quote', 'code'],
+          ['unordered', 'ordered', 'outdent', 'indent']
+        ]"
+        :content-style="contentStyle"
+      ></q-editor>
+      <q-toolbar color="secondary">
+        <q-toolbar-title></q-toolbar-title>
+        <q-btn dense class="float-right" label="Send" icon="send" @click="SendMessage"></q-btn>
+      </q-toolbar>
+    </q-layout-footer>
   </q-layout>
 </template>
 
@@ -59,7 +72,9 @@ export default {
   name: 'MyLayout',
   data () {
     return {
-      leftDrawerOpen: this.$q.platform.is.desktop
+      leftDrawerOpen: true,
+      input: '',
+      contentStyle: { 'height': '80px', 'overflow-y': 'scroll' }
     }
   },
   methods: {
@@ -70,6 +85,10 @@ export default {
       }).catch(error => {
         alert(error)
       })
+    },
+    SendMessage () {
+      console.log(this.input)
+      alert(this.input)
     }
   }
 }
