@@ -1,6 +1,7 @@
-const { redisTask, sampleCallback } = require('../models/redis')
+const { redisTask, sampleCallback } = require('../db/redis')
 const crypto = require('crypto')
 const logger = require('log4js').getLogger(__filename)
+logger.level = 'debug'
 
 module.exports = {
   'session.create': (socket, action, timestamp, sessionid, payload) => {
