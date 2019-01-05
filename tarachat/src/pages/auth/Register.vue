@@ -3,37 +3,61 @@
     <div class="q-display-3">Register</div>
     <hr class="q-hr q-my-lg">
 
-    <q-input v-model="nickname" type="text" float-label="Nickname"/>
-    <q-input v-model="email" type="email" float-label="Email"/>
-    <q-input v-model="password" type="password" float-label="Password"/>
+    <q-field :error="$v.form.nickname.$error" error-label="Please type a nickname">
+      <q-input v-model="form.nickname" type="text" float-label="Nickname"/>
+    </q-field>
+
+    <q-field :error="$v.form.email.$error" error-label="Please type a valid email">
+      <q-input v-model="form.email" type="email" float-label="Email" @blur="$v.form.email.$touch"/>
+    </q-field>
+
+    <q-field :error="$v.form.password.$error" error-label="Please type a longer password">
+      <q-input v-model="form.password" type="password" float-label="Password"/>
+    </q-field>
 
     <hr class="q-hr q-my-lg">
 
     <div class="row justify-around">
       <q-btn color="primary" class="q-py-sm q-px-xl" label="Go Back" @click="routeLogin"/>
-      <q-btn color="primary" class="q-py-sm q-px-xl" label="Submit" @click="Register"/>
+      <q-btn color="primary" class="q-py-sm q-px-xl" label="Submit" @click="submit"/>
     </div>
   </q-page>
 </template>
 
 <script>
 import { Register } from 'src/utils/auth.js'
+import { required, email, minLength } from 'vuelidate/lib/validators'
 
 export default {
   name: 'Register',
   data: function () {
     return {
-      nickname: '',
-      email: 'username@example.com',
-      password: 'sdf'
+      form: {
+        nickname: '',
+        email: 'username@example.com',
+        password: 'sdf'
+      }
+    }
+  },
+  validations: {
+    form: {
+      nickname: { required },
+      email: { required, email },
+      password: { required, minLength: minLength(6) }
     }
   },
   methods: {
     routeLogin () {
       this.$router.push({ name: 'Login' })
     },
-    Register () {
-      const { nickname, email, password } = this
+    submit () {
+      this.$v.form.$touch()
+      if (this.$v.form.$error) {
+        this.$q.notify('Please review fields again.')
+        return
+      }
+
+      const { nickname, email, password } = this.form
       Register({ nickname, email, password }).then(() => {
         this.$q.notify({
           message: `Register Success`,
