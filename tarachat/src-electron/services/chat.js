@@ -4,6 +4,19 @@ const socket = require('./socket')
 const logger = require('log4js').getLogger(__filename)
 logger.level = 'debug'
 
+ipcMain.on('request.chat.onlineusers', (event, arg) => {
+  socket.on('r.chat.onlineusers', (success, payload) => {
+    logger.info('request.chat.onlineusers')
+    event.sender.send('response.chat.onlineusers', {
+      success: true,
+      arg,
+      payload
+    })
+  })
+
+  socket.emit('q.chat.onlineusers')
+})
+
 ipcMain.on('request.chat.sendmsg', (event, arg) => {
   const { touid, message } = arg
 
