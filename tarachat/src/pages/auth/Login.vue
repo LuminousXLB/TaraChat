@@ -28,7 +28,7 @@ export default {
     return {
       form: {
         email: 'username@example.com',
-        password: 'sdf'
+        password: 'asdfqwer'
       }
     }
   },
@@ -49,8 +49,11 @@ export default {
       }
 
       const { email, password } = this.form
-      Login({ email, password }).then(({ nickname }) => {
+      Login({ email, password }).then(({ uid, nickname, onlineusers }) => {
+        this.$q.sessionStorage.set('uid', uid)
         this.$q.sessionStorage.set('nickname', nickname)
+        this.$q.sessionStorage.set('onlineusers', onlineusers)
+        console.log(onlineusers)
         this.$router.push({ name: 'Chat' })
       }).catch(error => {
         this.$q.dialog({

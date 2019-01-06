@@ -35,7 +35,7 @@ export default {
       form: {
         nickname: '',
         email: 'username@example.com',
-        password: 'sdf'
+        password: 'asdfqwer'
       }
     }
   },

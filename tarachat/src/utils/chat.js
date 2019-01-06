@@ -1,13 +1,13 @@
 import ipcCommonClient from './common.js'
 // const { ipcRenderer } = require('electron')
 
-export const SendMessage = ({ toFriend, message }) =>
+export const SendMessage = ({ touid, message }) =>
   ipcCommonClient(
     {
       requestEventName: 'request.chat.sendmsg',
       responseEventName: 'response.chat.sendmsg'
     },
-    { toFriend, message }
+    { touid, message }
   )
 
 export const ReceiveMessage = () => {

@@ -93,7 +93,7 @@ export default {
     SendMessage () {
       console.log(this.input)
       SendMessage({
-        toFriend: 'whoever',
+        touid: 'whoever',
         message: this.input
       })
       alert(this.input)
@@ -106,12 +106,7 @@ export default {
     })
     for (let identity of this.contacts) {
       Avatar(identity).then((payload) => {
-        const uri = payload.uri
-        const ident = payload.identity
-
-        console.log(identity, ident, uri)
-
-        this.avatars[identity] = uri
+        this.avatars[identity] = payload.uri
         this.avatars.__ob__.dep.notify() // 这条是用来强制更新view的，如果没有发现特殊的bug不要抄过去
       })
     }
