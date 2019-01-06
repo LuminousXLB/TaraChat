@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron')
 const crypto = require('crypto')
-const tarasocket = require('./socket')
+const socket = require('./socket')
 
 ipcMain.on('request.auth.register', (event, arg) => {
   const { nickname, email, password } = arg
@@ -9,7 +9,7 @@ ipcMain.on('request.auth.register', (event, arg) => {
   hmac.update(password)
   const hashPwd = hmac.digest('hex')
 
-  tarasocket.once('auth.register', (success, payload) => {
+  socket.once('r.auth.register', (success, payload) => {
     event.sender.send('response.auth.register', {
       success,
       arg,
@@ -17,7 +17,7 @@ ipcMain.on('request.auth.register', (event, arg) => {
     })
   })
 
-  tarasocket.send('auth.register', {
+  socket.emit('q.auth.register', {
     nickname,
     email,
     hashPwd
@@ -31,7 +31,7 @@ ipcMain.on('request.auth.login', (event, arg) => {
   hmac.update(password)
   const hashPwd = hmac.digest('hex')
 
-  tarasocket.once('auth.login', (success, payload) => {
+  socket.once('r.auth.login', (success, payload) => {
     event.sender.send('response.auth.login', {
       success,
       arg,
@@ -39,19 +39,19 @@ ipcMain.on('request.auth.login', (event, arg) => {
     })
   })
 
-  tarasocket.send('auth.login', {
+  socket.emit('q.auth.login', {
     email,
     hashPwd
   })
 })
 
 ipcMain.on('request.auth.logout', event => {
-  tarasocket.once('auth.logout', (success, payload) => {
+  socket.once('r.auth.logout', (success, payload) => {
     event.sender.send('response.auth.logout', {
       success: true,
       payload
     })
   })
 
-  tarasocket.send('auth.logout')
+  socket.emit('q.auth.logout')
 })
