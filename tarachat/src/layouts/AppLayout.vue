@@ -94,7 +94,7 @@ export default {
       console.log(this.input)
       SendMessage({
         toFriend: 'whoever',
-        message: input
+        message: this.input
       })
       alert(this.input)
     }
