@@ -8,17 +8,17 @@ module.exports = {
     const { nickname, email, hashPwd } = payload
 
     if (!nickname) {
-      socket.write(failRespFactory(action, `Nickname cannot be empty`))
+      socket.write(failResponse(action, `Nickname cannot be empty`))
       return
     }
 
     if (!email) {
-      socket.write(failRespFactory(action, `Email cannot be empty`))
+      socket.write(failResponse(action, `Email cannot be empty`))
       return
     }
 
     if (!hashPwd) {
-      socket.write(failRespFactory(action, `Password cannot be empty`))
+      socket.write(failResponse(action, `Password cannot be empty`))
       return
     }
 
