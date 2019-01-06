@@ -97,15 +97,18 @@ export default {
         message: this.input
       })
       alert(this.input)
+    },
+    fetchAvatar (nickname) {
+      Avatar(nickname).then(payload => {
+        this.avatars[nickname] = payload.uri
+        this.avatars.__ob__.dep.notify()
+      })
     }
   },
   created () {
     ipcRenderer.on('broadcast.online', (event, arg) => {
       this.onlineusers.push(arg)
-      Avatar(arg.nickname).then(payload => {
-        this.avatars[arg.nickname] = payload.uri
-        this.avatars.__ob__.dep.notify() // 这条是用来强制更新view的，如果没有发现特殊的bug不要抄过去
-      })
+      this.fetchAvatar(arg.nickname)
     })
 
     ipcRenderer.on('broadcast.offline', (event, arg) => {
@@ -117,15 +120,9 @@ export default {
     this.nickname = this.$q.sessionStorage.get.item('nickname')
     this.onlineusers = this.$q.sessionStorage.get.item('onlineusers')
 
-    Avatar(this.nickname).then(({ uri, arg }) => {
-      this.avatars[this.nickname] = uri
-      this.avatars.__ob__.dep.notify() // 这条是用来强制更新view的，如果没有发现特殊的bug不要抄过去
-    })
+    this.fetchAvatar(this.nickname)
     for (let { nickname } of this.onlineusers) {
-      Avatar(nickname).then((payload) => {
-        this.avatars[nickname] = payload.uri
-        this.avatars.__ob__.dep.notify() // 这条是用来强制更新view的，如果没有发现特殊的bug不要抄过去
-      })
+      this.fetchAvatar(nickname)
     }
   }
 }
