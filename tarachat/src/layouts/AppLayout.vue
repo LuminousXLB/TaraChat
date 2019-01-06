@@ -56,6 +56,7 @@ import { openURL } from 'quasar'
 import { Logout } from 'src/utils/auth.js'
 import { Connect } from 'src/utils/socket.js'
 import { Avatar } from 'src/utils/avatar.js'
+import { SendMessage } from 'src/utils/chat.js'
 
 export default {
   name: 'MyLayout',
@@ -91,6 +92,10 @@ export default {
     },
     SendMessage () {
       console.log(this.input)
+      SendMessage({
+        toFriend: 'whoever',
+        message: input
+      })
       alert(this.input)
     }
   },
