@@ -44,3 +44,16 @@ app.on('activate', () => {
 })
 
 require('../services/index')
+const socket = require('../services/socket')
+const logger = require('log4js').getLogger(__filename)
+logger.level = 'debug'
+
+socket.on('broadcast.online', payload => {
+  logger.info('broadcast.online', payload)
+  mainWindow.webContents.send('broadcast.online', payload)
+})
+
+socket.on('broadcast.offline', payload => {
+  logger.info('broadcast.offline', payload)
+  mainWindow.webContents.send('broadcast.offline', payload)
+})

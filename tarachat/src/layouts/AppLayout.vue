@@ -21,9 +21,12 @@
           <q-item-main :label="nickname"/>
         </q-item>
         <q-list-header>Friends</q-list-header>
-        <q-item v-for="(contact, index) in contacts" :key="`${contact}-${index}`">
-          <q-item-side :avatar="avatars[contact]"/>
-          <q-item-main :label="contact" sublabel="No Latest Message"/>
+        <q-item
+          v-for="({uid, nickname}, index) in onlineusers"
+          :key="`${index}-${uid}-${nickname}`"
+        >
+          <q-item-side :avatar="avatars[nickname]"/>
+          <q-item-main :label="nickname" sublabel="No More Messages"/>
         </q-item>
       </q-list>
     </q-layout-drawer>
@@ -57,6 +60,7 @@ import { Logout } from 'src/utils/auth.js'
 import { Connect } from 'src/utils/socket.js'
 import { Avatar } from 'src/utils/avatar.js'
 import { SendMessage } from 'src/utils/chat.js'
+import { ipcRenderer } from 'electron'
 
 export default {
   name: 'MyLayout',
@@ -71,13 +75,9 @@ export default {
         'Forum',
         'Twitter'
       ],
+      nickname: '',
+      onlineusers: [],
       avatars: {}
-    }
-  },
-  computed: {
-    nickname () {
-      console.log(__filename, this.$q.sessionStorage.get.item('nickname'))
-      return this.$q.sessionStorage.get.item('nickname')
     }
   },
   methods: {
@@ -99,14 +99,31 @@ export default {
       alert(this.input)
     }
   },
+  created () {
+    ipcRenderer.on('broadcast.online', (event, arg) => {
+      this.onlineusers.push(arg)
+      Avatar(arg.nickname).then(payload => {
+        this.avatars[arg.nickname] = payload.uri
+        this.avatars.__ob__.dep.notify() // 这条是用来强制更新view的，如果没有发现特殊的bug不要抄过去
+      })
+    })
+
+    ipcRenderer.on('broadcast.offline', (event, arg) => {
+      const idx = this.onlineusers.findIndex(payload => arg.uid === payload.uid)
+      this.onlineusers.splice(idx, 1)
+    })
+  },
   mounted () {
+    this.nickname = this.$q.sessionStorage.get.item('nickname')
+    this.onlineusers = this.$q.sessionStorage.get.item('onlineusers')
+
     Avatar(this.nickname).then(({ uri, arg }) => {
       this.avatars[this.nickname] = uri
       this.avatars.__ob__.dep.notify() // 这条是用来强制更新view的，如果没有发现特殊的bug不要抄过去
     })
-    for (let identity of this.contacts) {
-      Avatar(identity).then((payload) => {
-        this.avatars[identity] = payload.uri
+    for (let { nickname } of this.onlineusers) {
+      Avatar(nickname).then((payload) => {
+        this.avatars[nickname] = payload.uri
         this.avatars.__ob__.dep.notify() // 这条是用来强制更新view的，如果没有发现特殊的bug不要抄过去
       })
     }

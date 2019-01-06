@@ -19,11 +19,11 @@ ipcMain.on('request.chat.sendmsg', (event, arg) => {
     })
   }, 5000)
 
-  socket.on('r.chat.sendmsg', (success, payload) => {
+  socket.on('r.chat.sendmsg', payload => {
     if (payload.touid === touid && payload.digest === digest) {
       clearTimeout(timer)
       event.sender.send('response.chat.sendmsg', {
-        success,
+        success: true,
         arg,
         payload
       })

@@ -1,6 +1,8 @@
 const { ipcMain } = require('electron')
 const crypto = require('crypto')
 const socket = require('./socket')
+const logger = require('log4js').getLogger(__filename)
+logger.level = 'debug'
 
 ipcMain.on('request.auth.register', (event, arg) => {
   const { nickname, email, password } = arg
@@ -46,11 +48,8 @@ ipcMain.on('request.auth.login', (event, arg) => {
 })
 
 ipcMain.on('request.auth.logout', event => {
-  socket.once('r.auth.logout', (success, payload) => {
-    event.sender.send('response.auth.logout', {
-      success: true,
-      payload
-    })
+  socket.once('r.auth.logout', success => {
+    event.sender.send('response.auth.logout', { success: true })
   })
 
   socket.emit('q.auth.logout')
