@@ -6,16 +6,20 @@ logger.level = 'debug'
 const pool = new Pool(POSTGRES)
 
 module.exports = {
-  query: (text, params, callback) => {
-    const start = Date.now()
-    return pool.query(text, params, (err, res) => {
-      const duration = Date.now() - start
-      if (res) {
+  query: (text, params) => {
+    return new Promise((resolve, reject) => {
+      const start = Date.now()
+      pool.query(text, params, (err, res) => {
+        const duration = Date.now() - start
         logger.info(`Executed query [${duration}] ${text}`)
-      } else {
-        logger.error(err)
-      }
-      callback(err, res)
+        if (res) {
+          logger.info(`Rows ${res.rowCount}`)
+          resolve(res)
+        } else {
+          logger.error(err)
+          reject(err)
+        }
+      })
     })
   },
   getClient: callback => {
