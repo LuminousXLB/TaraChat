@@ -12,6 +12,7 @@
   "dependencies": {
     "log4js": "^3.0.6",
     "pg": "^7.7.1",
-    "redis": "^2.8.0"
+    "redis": "^2.8.0",
+    "socket.io": "^2.2.0"
   }
 }
