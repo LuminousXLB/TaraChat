@@ -6,7 +6,6 @@ logger.level = 'debug'
 
 ipcMain.on('request.chat.onlineusers', (event, arg) => {
   socket.on('r.chat.onlineusers', (success, payload) => {
-    logger.info('request.chat.onlineusers')
     event.sender.send('response.chat.onlineusers', {
       success: true,
       arg,

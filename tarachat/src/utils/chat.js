@@ -1,13 +1,11 @@
 import ipcCommonClient from './common.js'
 // const { ipcRenderer } = require('electron')
 
-export const FetchOnlineUsers = () => {
-  console.log(__filename, 'FetchOnlineUsers')
-  return ipcCommonClient({
+export const FetchOnlineUsers = () =>
+  ipcCommonClient({
     requestEventName: 'request.chat.onlineusers',
     responseEventName: 'response.chat.onlineusers'
   })
-}
 
 export const SendMessage = ({ touid, message }) =>
   ipcCommonClient(

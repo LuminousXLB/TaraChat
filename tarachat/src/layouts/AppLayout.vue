@@ -2,7 +2,8 @@
   <q-layout view="lHh LpR lFf">
     <q-layout-header>
       <q-toolbar color="primary" :glossy="$q.theme === 'mat'" :inverted="$q.theme === 'ios'">
-        <q-toolbar-title>Tara Chat
+        <q-toolbar-title>
+          {{ title }}
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
         <q-btn round color="secondary" @click="Connect">
@@ -24,6 +25,7 @@
         <q-item
           v-for="({uid, nickname}, index) in onlineusers"
           :key="`${index}-${uid}-${nickname}`"
+          @click="ClickContactHandler(uid, nickname)"
         >
           <q-item-side :avatar="avatars[nickname]"/>
           <q-item-main :label="nickname"/>
@@ -70,7 +72,9 @@ export default {
       input: '',
       nickname: '',
       onlineusers: [],
-      avatars: {}
+      avatars: {},
+      onchat: {},
+      title: 'Tara Chat'
     }
   },
   methods: {
@@ -96,6 +100,11 @@ export default {
         this.avatars[nickname] = payload.uri
         this.avatars.__ob__.dep.notify()
       })
+    },
+    ClickContactHandler (uid, nickname) {
+      console.log('ClickContactHandler', uid, nickname)
+      this.title = 'Tara Chat - ' + nickname
+      this.onchat = { uid, nickname }
     }
   },
   mounted () {
