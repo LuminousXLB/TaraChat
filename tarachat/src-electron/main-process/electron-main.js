@@ -57,3 +57,11 @@ socket.on('broadcast.offline', payload => {
   logger.info('broadcast.offline', payload)
   mainWindow.webContents.send('broadcast.offline', payload)
 })
+
+socket.on('q.chat.receivemsg', payload => {
+  const { fromuid, message, digest } = payload
+  logger.info('q.chat.receivemsg', fromuid, message)
+
+  mainWindow.webContents.send('q.chat.receivemsg', payload)
+  socket.emit('r.chat.receivemsg', { fromuid, digest })
+})

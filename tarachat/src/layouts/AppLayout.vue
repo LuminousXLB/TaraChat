@@ -40,6 +40,7 @@
     <q-layout-footer>
       <q-editor
         v-model="input"
+        :disable="sendMessageDisabled"
         :toolbar="[
           ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript', 'removeFormat'],
           ['token', 'hr', 'link'],
@@ -51,7 +52,14 @@
       ></q-editor>
       <q-toolbar color="secondary">
         <q-toolbar-title></q-toolbar-title>
-        <q-btn dense class="float-right" label="Send" icon="send" @click="SendMessage"></q-btn>
+        <q-btn
+          dense
+          class="float-right"
+          label="Send"
+          icon="send"
+          :disable="sendMessageDisabled"
+          @click="SendMessage"
+        />
       </q-toolbar>
     </q-layout-footer>
   </q-layout>
@@ -76,11 +84,17 @@ export default {
       drawer: true,
       input: '',
       nickname: '',
+      uid: -1,
       onlineusers: {},
       avatars: {},
       onchat: {},
       chats: {},
       title: 'Tara Chat'
+    }
+  },
+  computed: {
+    sendMessageDisabled () {
+      return this.onchat.uid === undefined
     }
   },
   methods: {
@@ -97,11 +111,11 @@ export default {
       console.log(this.input)
       const timestamp = new Date()
       const message = this.input
+
       if (this.chats[this.onchat.uid] === undefined) {
         this.$set(this.chats, this.onchat.uid, [])
       }
 
-      // this.onchat.uid
       this.chats[this.onchat.uid].push({
         name: this.nickname,
         sent: true,
@@ -133,6 +147,10 @@ export default {
     }
   },
   mounted () {
+    this.nickname = this.$q.sessionStorage.get.item('nickname')
+    this.uid = this.$q.sessionStorage.get.item('uid')
+    this.fetchAvatar(this.nickname)
+
     ipcRenderer.on('broadcast.online', (event, arg) => {
       this.$set(this.onlineusers, parseInt(arg.uid), arg.nickname)
       this.fetchAvatar(arg.nickname)
@@ -142,15 +160,32 @@ export default {
       this.$delete(this.onlineusers, parseInt(arg.uid))
     })
 
-    this.nickname = this.$q.sessionStorage.get.item('nickname')
-    this.fetchAvatar(this.nickname)
-
     FetchOnlineUsers().then(({ onlineusers }) => {
       let ou = onlineusers.filter(({ uid }) => this.$q.sessionStorage.get.item('uid') !== uid)
       for (let { uid, nickname } of ou) {
         this.$set(this.onlineusers, parseInt(uid), nickname)
         this.fetchAvatar(nickname)
       }
+
+      ipcRenderer.on('q.chat.receivemsg', (event, arg) => {
+        const { fromuid, touid, message, timestamp } = arg
+        let channel = fromuid
+
+        if (touid !== this.uid) {
+          channel = touid
+        }
+
+        if (this.chats[channel] === undefined) {
+          this.$set(this.chats, channel, [])
+        }
+
+        this.chats[channel].push({
+          name: this.onlineusers[fromuid],
+          sent: false,
+          message,
+          timestamp
+        })
+      })
     })
   }
 }

@@ -44,8 +44,3 @@ ipcMain.on('request.chat.sendmsg', (event, arg) => {
 
   socket.emit('q.chat.sendmsg', { touid, message, digest, timestamp })
 })
-
-socket.on('q.chat.receivemsg', ({ fromuid, message, digest, timestamp }) => {
-  logger.info(fromuid, message)
-  socket.emit('r.chat.receivemsg', { fromuid, digest })
-})

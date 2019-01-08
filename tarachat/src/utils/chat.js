@@ -1,5 +1,6 @@
 import ipcCommonClient from './common.js'
-// const { ipcRenderer } = require('electron')
+// import { ipcRenderer } from 'electron'
+// import AppLayout from 'layouts/AppLayout.vue'
 
 export const FetchOnlineUsers = () =>
   ipcCommonClient({
@@ -15,14 +16,3 @@ export const SendMessage = ({ touid, message, timestamp }) =>
     },
     { touid, message, timestamp }
   )
-
-export const ReceiveMessage = () => {
-  //   ipcRenderer.once(responseEventName, (event, arg) => {
-  //     console.warn(responseEventName, arg)
-  //     if (arg.success) {
-  //       resolve(arg.payload)
-  //     } else {
-  //       reject(arg.payload.error)
-  //     }
-  //   })
-}
