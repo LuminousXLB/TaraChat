@@ -68,12 +68,12 @@
       <q-toolbar color="secondary">
         <q-toolbar-title></q-toolbar-title>
 
-        <q-btn
+        <!-- <q-btn
           icon-right="attach_file"
           :disable="sendMessageDisabled"
           label="Send File"
           @click="SendFile"
-        />
+        /> -->
         <q-btn
           icon-right="send"
           :disable="sendMessageDisabled || !input"
@@ -231,6 +231,8 @@ export default {
     })
 
     ipcRenderer.on('chat.receivefile.progress', (event, arg) => {
+      console.log('chat.receivefile.progress', arg)
+
       const { infoobj, progress } = arg
       this.$set(this.receiveFileProgress[infoobj.digest], 'percentage', progress.percentage)
       if (progress.percentage >= 100) {

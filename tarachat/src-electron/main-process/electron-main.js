@@ -82,14 +82,12 @@ const ss = require('socket.io-stream')
 const path = require('path')
 
 ss(socket).on('q.chat.receivefile', (instream, payload) => {
-  console.log('q.chat.receivefile', payload)
-
   const { fromuid, touid, name, size, digest } = payload
   const parseobj = path.parse(name)
 
   const prefix = app.getPath('downloads')
-  logger.info('q.chat.receivefile', prefix)
-  const newPath = path.join(prefix, `${parseobj.name}_digest${parseobj.ext}`)
+  const newPath = path.join(prefix, `${parseobj.name}_${digest}${parseobj.ext}`)
+
   logger.info('q.chat.receivefile', newPath)
 
   const pstream = ps({ length: size, time: 200 })
