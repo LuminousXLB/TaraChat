@@ -125,8 +125,6 @@ export default {
     fetchAvatar (nickname) {
       Avatar(nickname).then(payload => {
         this.$set(this.avatars, nickname, payload.uri)
-        // this.avatars[nickname] = payload.uri
-        // this.avatars.__ob__.dep.notify()
       })
     },
     ClickContactHandler (uid, nickname) {
@@ -141,8 +139,7 @@ export default {
     })
 
     ipcRenderer.on('broadcast.offline', (event, arg) => {
-      const idx = this.onlineusers.findIndex(payload => arg.uid === payload.uid)
-      this.onlineusers.splice(idx, 1)
+      delete this.onlineusers[parseInt(arg.uid)]
     })
 
     this.nickname = this.$q.sessionStorage.get.item('nickname')
