@@ -9,8 +9,8 @@
           :avatar="avatars[chat.name]"
           :text="[chat.message]"
           :stamp="format(chat.timestamp)"
-          :sent="chat.sent"/>
-        <!-- <q-chat-message label="This is a label"/> -->
+          :sent="chat.sent"
+        />
       </div>
     </q-scroll-area>
   </q-page>
@@ -26,13 +26,7 @@ import dateFns from 'date-fns'
 export default {
   name: 'chat-panel',
   data () {
-    return {
-      avatarMe: '',
-      text: [
-        'hunter3'
-      ],
-      input: ''
-    }
+    return {}
   },
   props: ['avatars', 'chats'],
   methods: {

@@ -16,3 +16,9 @@ export const SendMessage = ({ touid, message, timestamp }) =>
     },
     { touid, message, timestamp }
   )
+
+export const SendFile = () =>
+  ipcCommonClient({
+    requestEventName: 'request.chat.sendfile',
+    responseEventName: 'response.chat.sendfile'
+  })

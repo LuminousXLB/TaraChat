@@ -38,6 +38,7 @@ module.exports = function (ctx) {
     // framework: 'all' --- includes everything; for dev only!
     framework: {
       components: [
+        'QModal',
         'QScrollArea',
         'QLayout',
         'QLayoutHeader',
@@ -54,13 +55,16 @@ module.exports = function (ctx) {
         'QItemSeparator',
         'QItemSide',
         'QItemTile',
+        'QField',
         'QInput',
+        'QEditor',
         'QBtn',
+        'QBtnDropdown',
         'QJumbotron',
+        'QProgress',
         'QIcon',
         'QChatMessage',
-        'QEditor',
-        'QField'
+        'QChip'
       ],
       directives: ['Ripple'],
       // Quasar plugins

@@ -21,6 +21,10 @@
           <q-item-side :avatar="avatars[nickname]"/>
           <q-item-main :label="nickname"/>
         </q-item>
+
+        <div class="q-caption">Regular 12sp</div>
+        <q-progress :percentage="percentage" :buffer="buffer"/>
+
         <q-list-header>Other Online Users</q-list-header>
         <q-item
           v-for="(nickname, uid) in onlineusers"
@@ -29,6 +33,7 @@
         >
           <q-item-side :avatar="avatars[nickname]"/>
           <q-item-main :label="nickname"/>
+          <q-item-side v-if="unread[uid]" icon="chat_bubble"/>
         </q-item>
       </q-list>
     </q-layout-drawer>
@@ -52,16 +57,23 @@
       ></q-editor>
       <q-toolbar color="secondary">
         <q-toolbar-title></q-toolbar-title>
+
         <q-btn
-          dense
-          class="float-right"
-          label="Send"
-          icon="send"
+          icon-right="attach_file"
           :disable="sendMessageDisabled"
+          label="Send File"
+          @click="SendFile"
+        />
+        <q-btn
+          icon-right="send"
+          :disable="sendMessageDisabled || !input"
+          label="Send"
           @click="SendMessage"
         />
       </q-toolbar>
     </q-layout-footer>
+
+    <q-modal v-model="fileModalOpened"></q-modal>
   </q-layout>
 </template>
 
@@ -70,7 +82,7 @@ import { openURL } from 'quasar'
 import { Logout } from 'src/utils/auth.js'
 import { Connect } from 'src/utils/socket.js'
 import { Avatar } from 'src/utils/avatar.js'
-import { FetchOnlineUsers, SendMessage } from 'src/utils/chat.js'
+import { FetchOnlineUsers, SendMessage, SendFile } from 'src/utils/chat.js'
 import { ipcRenderer } from 'electron'
 import ChatPanel from 'pages/app/ChatPanel'
 
@@ -89,7 +101,11 @@ export default {
       avatars: {},
       onchat: {},
       chats: {},
-      title: 'Tara Chat'
+      unread: {},
+      title: 'Tara Chat',
+      fileModalOpened: false,
+      percentage: 22,
+      buffer: 10
     }
   },
   computed: {
@@ -106,6 +122,13 @@ export default {
       }).catch(error => {
         alert(error)
       })
+    },
+    SendFile () {
+      console.log('SendFile Clicked')
+      SendFile().then(({ stats }) => {
+        console.log(stats)
+      })
+      // const { dialog } = require('electron').remote
     },
     SendMessage () {
       console.log(this.input)
@@ -144,6 +167,7 @@ export default {
     ClickContactHandler (uid, nickname) {
       this.title = 'Tara Chat - ' + nickname
       this.onchat = { uid: parseInt(uid), nickname }
+      this.$set(this.unread, this.onchat.uid, false)
     }
   },
   mounted () {
@@ -185,6 +209,10 @@ export default {
           message,
           timestamp
         })
+
+        if (this.onchat.uid !== channel) {
+          this.$set(this.unread, channel, true)
+        }
       })
     })
   }
