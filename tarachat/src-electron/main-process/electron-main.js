@@ -45,6 +45,7 @@ app.on('activate', () => {
 
 require('../services/index')
 const socket = require('../services/socket')
+const fpeb = require('../services/chat')
 const logger = require('log4js').getLogger(__filename)
 logger.level = 'debug'
 
@@ -64,4 +65,8 @@ socket.on('q.chat.receivemsg', payload => {
 
   mainWindow.webContents.send('q.chat.receivemsg', payload)
   socket.emit('r.chat.receivemsg', { fromuid, digest })
+})
+
+fpeb.on('chat.sendfile.progress', (infoobj, progress) => {
+  mainWindow.webContents.send('chat.sendfile.progress', { infoobj, progress })
 })

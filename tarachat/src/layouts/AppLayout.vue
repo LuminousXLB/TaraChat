@@ -22,8 +22,10 @@
           <q-item-main :label="nickname"/>
         </q-item>
 
-        <div class="q-caption">Regular 12sp</div>
-        <q-progress :percentage="percentage" :buffer="buffer"/>
+        <div v-for="({filename, percentage}, digest) in sendFileProgress" :key="digest">
+          <div class="q-caption">{{filename}}</div>
+          <q-progress :percentage="percentage"/>
+        </div>
 
         <q-list-header>Other Online Users</q-list-header>
         <q-item
@@ -104,8 +106,8 @@ export default {
       unread: {},
       title: 'Tara Chat',
       fileModalOpened: false,
-      percentage: 22,
-      buffer: 10
+      sendFileProgress: {},
+      percentage: 22
     }
   },
   computed: {
@@ -125,10 +127,15 @@ export default {
     },
     SendFile () {
       console.log('SendFile Clicked')
-      SendFile().then(({ stats }) => {
-        console.log(stats)
+      SendFile({
+        touid: this.onchat.uid
+      }).then(({ infoobj }) => {
+        console.log(infoobj)
+        this.$set(this.sendFileProgress, infoobj.digest, {
+          filename: infoobj.filename,
+          percentage: 0
+        })
       })
-      // const { dialog } = require('electron').remote
     },
     SendMessage () {
       console.log(this.input)
@@ -182,6 +189,20 @@ export default {
 
     ipcRenderer.on('broadcast.offline', (event, arg) => {
       this.$delete(this.onlineusers, parseInt(arg.uid))
+    })
+
+    ipcRenderer.on('chat.sendfile.progress', (event, arg) => {
+      const { infoobj, progress } = arg
+      this.$set(this.sendFileProgress[infoobj.digest], 'percentage', progress.percentage)
+      if (progress.percentage === 100) {
+        this.$delete(this.sendFileProgress, infoobj.digest)
+        this.$q.notify({
+          message: `Send file ${infoobj.name} complete.`,
+          timeout: 2500,
+          color: 'positive',
+          position: 'bottom-left'
+        })
+      }
     })
 
     FetchOnlineUsers().then(({ onlineusers }) => {
