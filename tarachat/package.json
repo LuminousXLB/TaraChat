@@ -7,9 +7,10 @@
   "author": "Taraxacum <john980118@163.com>",
   "private": true,
   "scripts": {
+    "start": "eslint --fix --ext .js,.vue src && quasar dev -m electron -t ios",
+    "build": "quasar build -m electron -t ios",
     "lint": "eslint --ext .js,.vue src",
     "fix": "eslint --fix --ext .js,.vue src",
-    "start": "eslint --fix --ext .js,.vue src && quasar dev -m electron -t ios",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "electron": "^3.0.8",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-packager": "^12.2.0",
     "eslint": "^5.0.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-friendly-formatter": "^4.0.1",
