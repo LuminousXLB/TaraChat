@@ -22,8 +22,8 @@ const routes = [
     ]
   },
   {
-    path: '/app',
-    name: 'App',
+    path: '/chat',
+    name: 'Chat',
     component: () => import('layouts/AppLayout.vue'),
     children: [
       // {
