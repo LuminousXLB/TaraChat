@@ -125,13 +125,20 @@ io.on('connection', socket => {
     }
   })
 
-  socket.on('q.chat.sendmsg', ({ touid, message, digest }) => {
+  socket.on('q.chat.sendmsg', ({ touid, message, digest, timestamp }) => {
+    logger.info('q.chat.sendmsg', touid, message)
     socket
       .to(UID2SOCKETID[touid])
-      .emit('q.chat.receivemsg', { fromuid: socket.uid, message, digest })
+      .emit('q.chat.receivemsg', {
+        fromuid: socket.uid,
+        message,
+        digest,
+        timestamp
+      })
   })
 
   socket.on('r.chat.receivemsg', ({ fromuid, digest }) => {
+    logger.info('r.chat.receivemsg', fromuid)
     socket
       .to(UID2SOCKETID[fromuid])
       .emit('r.chat.sendmsg', { touid: socket.uid, digest })
