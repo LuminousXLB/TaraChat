@@ -139,7 +139,7 @@ export default {
     })
 
     ipcRenderer.on('broadcast.offline', (event, arg) => {
-      delete this.onlineusers[parseInt(arg.uid)]
+      this.$delete(this.onlineusers, parseInt(arg.uid))
     })
 
     this.nickname = this.$q.sessionStorage.get.item('nickname')
