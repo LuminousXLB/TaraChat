@@ -79,13 +79,15 @@ ipcMain.on('request.chat.sendfile', (event, arg) => {
         payload: { error: error.message }
       })
     } else {
+      const { fromuid, touid } = arg
       logger.info('request.chat.sendfile', stats)
 
       const hash = crypto.createHash('sha1')
-      hash.update(JSON.stringify({ selectedFile, stats }))
+      hash.update(JSON.stringify({ fromuid, touid, selectedFile, stats }))
       const digest = hash.digest('base64')
 
       const infoobj = {
+        touid: touid,
         name: path.basename(selectedFile),
         size: stats.size,
         digest
@@ -94,7 +96,7 @@ ipcMain.on('request.chat.sendfile', (event, arg) => {
       event.sender.send('response.chat.sendfile', {
         success: true,
         arg,
-        payload: { infoobj }
+        payload: infoobj
       })
 
       const sstream = ss.createStream()
@@ -105,7 +107,7 @@ ipcMain.on('request.chat.sendfile', (event, arg) => {
         fileProgressEventBus.emit('chat.sendfile.progress', infoobj, progress)
       })
 
-      ss(socket).emit('q.chat.sendfile', sstream, { touid: arg.touid, infoobj })
+      ss(socket).emit('q.chat.sendfile', sstream, infoobj)
 
       fs.createReadStream(selectedFile)
         .pipe(pstream)

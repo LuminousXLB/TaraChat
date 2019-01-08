@@ -22,8 +22,16 @@
           <q-item-main :label="nickname"/>
         </q-item>
 
-        <div v-for="({filename, percentage}, digest) in sendFileProgress" :key="digest">
-          <div class="q-caption">{{filename}}</div>
+        <div v-for="({tonickname, filename, percentage}, digest) in sendFileProgress" :key="digest">
+          <div class="q-caption">{{filename}} => {{tonickname}}</div>
+          <q-progress :percentage="percentage"/>
+        </div>
+
+        <div
+          v-for="({fromnickname, filename, percentage}, digest) in receiveFileProgress"
+          :key="digest"
+        >
+          <div class="q-caption">{{fromnickname}} => {{filename}}</div>
           <q-progress :percentage="percentage"/>
         </div>
 
@@ -107,6 +115,7 @@ export default {
       title: 'Tara Chat',
       fileModalOpened: false,
       sendFileProgress: {},
+      receiveFileProgress: {},
       percentage: 22
     }
   },
@@ -128,11 +137,13 @@ export default {
     SendFile () {
       console.log('SendFile Clicked')
       SendFile({
+        fromuid: this.uid,
         touid: this.onchat.uid
-      }).then(({ infoobj }) => {
-        console.log(infoobj)
-        this.$set(this.sendFileProgress, infoobj.digest, {
-          filename: infoobj.filename,
+      }).then(({ touid, name, size, digest }) => {
+        console.log({ touid, name, size, digest })
+        this.$set(this.sendFileProgress, digest, {
+          tonickname: this.onlineusers[this.onchat.uid],
+          filename: name,
           percentage: 0
         })
       })
@@ -194,14 +205,42 @@ export default {
     ipcRenderer.on('chat.sendfile.progress', (event, arg) => {
       const { infoobj, progress } = arg
       this.$set(this.sendFileProgress[infoobj.digest], 'percentage', progress.percentage)
-      if (progress.percentage === 100) {
-        this.$delete(this.sendFileProgress, infoobj.digest)
+      if (progress.percentage >= 100) {
+        this.$delete(this.sendFileProgress[infoobj.digest], 'percentage')
+      }
+    })
+
+    ipcRenderer.on('r.chat.sendfile', (event, arg) => {
+      this.$delete(this.sendFileProgress, arg.digest)
+      this.$q.notify({
+        message: `Send file complete.`,
+        timeout: 2500,
+        color: 'positive',
+        position: 'bottom-left'
+      })
+    })
+
+    ipcRenderer.on('chat.receivefile', (event, arg) => {
+      const { fromuid, name, newPath, digest } = arg
+      this.$set(this.receiveFileProgress, digest, {
+        fromnickname: this.onlineusers[fromuid],
+        filename: name,
+        newPath,
+        percentage: 0
+      })
+    })
+
+    ipcRenderer.on('chat.receivefile.progress', (event, arg) => {
+      const { infoobj, progress } = arg
+      this.$set(this.receiveFileProgress[infoobj.digest], 'percentage', progress.percentage)
+      if (progress.percentage >= 100) {
         this.$q.notify({
-          message: `Send file ${infoobj.name} complete.`,
+          message: `File received at ${this.receiveFileProgress[infoobj.digest].newPath}`,
           timeout: 2500,
           color: 'positive',
           position: 'bottom-left'
         })
+        this.$delete(this.receiveFileProgress, infoobj.digest)
       }
     })
 

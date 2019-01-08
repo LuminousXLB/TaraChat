@@ -70,3 +70,44 @@ socket.on('q.chat.receivemsg', payload => {
 fpeb.on('chat.sendfile.progress', (infoobj, progress) => {
   mainWindow.webContents.send('chat.sendfile.progress', { infoobj, progress })
 })
+
+socket.on('r.chat.sendfile', payload => {
+  // const {touid, digest} = payload
+  mainWindow.webContents.send('r.chat.sendfile', payload)
+})
+
+const fs = require('fs')
+const ps = require('progress-stream')
+const ss = require('socket.io-stream')
+const path = require('path')
+
+ss(socket).on('q.chat.receivefile', (instream, payload) => {
+  console.log('q.chat.receivefile', payload)
+
+  const { fromuid, touid, name, size, digest } = payload
+  const parseobj = path.parse(name)
+
+  const prefix = app.getPath('downloads')
+  logger.info('q.chat.receivefile', prefix)
+  const newPath = path.join(prefix, `${parseobj.name}_digest${parseobj.ext}`)
+  logger.info('q.chat.receivefile', newPath)
+
+  const pstream = ps({ length: size, time: 200 })
+
+  mainWindow.webContents.send('chat.receivefile', {
+    fromuid,
+    name,
+    newPath,
+    digest
+  })
+
+  pstream.on('progress', progress => {
+    logger.info(progress)
+    mainWindow.webContents.send('chat.receivefile.progress', {
+      infoobj: { fromuid, touid, name, size, digest },
+      progress
+    })
+  })
+
+  instream.pipe(pstream).pipe(fs.createWriteStream(newPath))
+})
