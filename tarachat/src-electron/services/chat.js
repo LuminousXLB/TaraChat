@@ -27,7 +27,7 @@ ipcMain.on('request.chat.sendmsg', (event, arg) => {
     event.sender.send('response.chat.sendmsg', {
       success: false,
       arg,
-      payload: 'Timeout'
+      payload: { error: 'Timeout' }
     })
   }, 10000)
 

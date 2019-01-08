@@ -130,14 +130,13 @@ export default {
       })
     },
     ClickContactHandler (uid, nickname) {
-      console.log('ClickContactHandler', uid, nickname)
       this.title = 'Tara Chat - ' + nickname
-      this.onchat = { uid, nickname }
+      this.onchat = { uid: parseInt(uid), nickname }
     }
   },
   mounted () {
     ipcRenderer.on('broadcast.online', (event, arg) => {
-      this.$set(this.onlineusers, arg.uid, arg.nickname)
+      this.$set(this.onlineusers, parseInt(arg.uid), arg.nickname)
       this.fetchAvatar(arg.nickname)
     })
 
@@ -152,7 +151,7 @@ export default {
     FetchOnlineUsers().then(({ onlineusers }) => {
       let ou = onlineusers.filter(({ uid }) => this.$q.sessionStorage.get.item('uid') !== uid)
       for (let { uid, nickname } of ou) {
-        this.$set(this.onlineusers, uid, nickname)
+        this.$set(this.onlineusers, parseInt(uid), nickname)
         this.fetchAvatar(nickname)
       }
     })
