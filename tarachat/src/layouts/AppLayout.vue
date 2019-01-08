@@ -6,7 +6,7 @@
           {{ title }}
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
-        <q-btn round color="secondary" @click="Connect">
+        <q-btn flat round dense @click="Connect">
           <q-icon name="cached"/>
         </q-btn>
         <q-btn flat round dense @click="Logout" title="Logout">
@@ -23,9 +23,9 @@
         </q-item>
         <q-list-header>Other Online Users</q-list-header>
         <q-item
-          v-for="({uid, nickname}, index) in onlineusers"
-          :key="`${index}-${uid}-${nickname}`"
-          @click="ClickContactHandler(uid, nickname)"
+          v-for="(nickname, uid) in onlineusers"
+          :key="`${uid}-${nickname}`"
+          @click.native="ClickContactHandler (uid, nickname)"
         >
           <q-item-side :avatar="avatars[nickname]"/>
           <q-item-main :label="nickname"/>
@@ -34,7 +34,7 @@
     </q-layout-drawer>
 
     <q-page-container>
-      <router-view/>
+      <chat-panel :avatars="avatars" :chats="chats[onchat.uid]"/>
     </q-page-container>
 
     <q-layout-footer>
@@ -63,17 +63,22 @@ import { Connect } from 'src/utils/socket.js'
 import { Avatar } from 'src/utils/avatar.js'
 import { FetchOnlineUsers, SendMessage } from 'src/utils/chat.js'
 import { ipcRenderer } from 'electron'
+import ChatPanel from 'pages/app/ChatPanel'
 
 export default {
   name: 'MyLayout',
+  components: {
+    'chat-panel': ChatPanel
+  },
   data () {
     return {
       drawer: true,
       input: '',
       nickname: '',
-      onlineusers: [],
+      onlineusers: {},
       avatars: {},
       onchat: {},
+      chats: {},
       title: 'Tara Chat'
     }
   },
@@ -89,16 +94,35 @@ export default {
     },
     SendMessage () {
       console.log(this.input)
-      SendMessage({
-        touid: 'whoever',
-        message: this.input
+      const timestamp = new Date()
+      const message = this.input
+      if (this.chats[this.onchat.uid] === undefined) {
+        this.$set(this.chats, this.onchat.uid, [])
+      }
+
+      // this.onchat.uid
+      this.chats[this.onchat.uid].push({
+        name: this.nickname,
+        sent: true,
+        message,
+        timestamp
       })
-      alert(this.input)
+
+      SendMessage({
+        touid: this.onchat.uid,
+        message,
+        timestamp
+      }).then(() => {
+        console.log('success')
+      }).catch(error => {
+        console.error(error)
+      })
     },
     fetchAvatar (nickname) {
       Avatar(nickname).then(payload => {
-        this.avatars[nickname] = payload.uri
-        this.avatars.__ob__.dep.notify()
+        this.$set(this.avatars, nickname, payload.uri)
+        // this.avatars[nickname] = payload.uri
+        // this.avatars.__ob__.dep.notify()
       })
     },
     ClickContactHandler (uid, nickname) {
@@ -122,11 +146,17 @@ export default {
     this.fetchAvatar(this.nickname)
 
     FetchOnlineUsers().then(({ onlineusers }) => {
-      this.onlineusers = onlineusers.filter(({ uid }) => this.$q.sessionStorage.get.item('uid') !== uid)
-      for (let { nickname } of this.onlineusers) {
+      let ou = onlineusers.filter(({ uid }) => this.$q.sessionStorage.get.item('uid') !== uid)
+      for (let { uid, nickname } of ou) {
+        this.$set(this.onlineusers, uid, nickname)
         this.fetchAvatar(nickname)
       }
     })
+  },
+  watch: {
+    chats (val, oval) {
+      console.log(val)
+    }
   }
 }
 </script>

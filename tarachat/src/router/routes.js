@@ -26,11 +26,11 @@ const routes = [
     name: 'App',
     component: () => import('layouts/AppLayout.vue'),
     children: [
-      {
-        path: '',
-        name: 'Chat',
-        component: () => import('pages/app/Chat.vue')
-      }
+      // {
+      //   path: '',
+      //   name: 'Chat',
+      //   component: () => import('pages/app/Chat.vue')
+      // }
     ]
     // children: [{ path: '', component: () => import('pages/Index.vue') }]
   }

@@ -17,7 +17,7 @@ ipcMain.on('request.chat.onlineusers', (event, arg) => {
 })
 
 ipcMain.on('request.chat.sendmsg', (event, arg) => {
-  const { touid, message } = arg
+  const { touid, message, timestamp } = arg
 
   const hash = crypto.createHash('md5')
   hash.update(message)
@@ -29,7 +29,7 @@ ipcMain.on('request.chat.sendmsg', (event, arg) => {
       arg,
       payload: 'Timeout'
     })
-  }, 5000)
+  }, 10000)
 
   socket.on('r.chat.sendmsg', payload => {
     if (payload.touid === touid && payload.digest === digest) {
@@ -42,10 +42,10 @@ ipcMain.on('request.chat.sendmsg', (event, arg) => {
     }
   })
 
-  socket.emit('q.chat.sendmsg', { touid, message, digest })
+  socket.emit('q.chat.sendmsg', { touid, message, digest, timestamp })
 })
 
-socket.on('q.chat.receivemsg', ({ fromuid, message, digest }) => {
+socket.on('q.chat.receivemsg', ({ fromuid, message, digest, timestamp }) => {
   logger.info(fromuid, message)
   socket.emit('r.chat.receivemsg', { fromuid, digest })
 })

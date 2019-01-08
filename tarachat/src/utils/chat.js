@@ -7,13 +7,13 @@ export const FetchOnlineUsers = () =>
     responseEventName: 'response.chat.onlineusers'
   })
 
-export const SendMessage = ({ touid, message }) =>
+export const SendMessage = ({ touid, message, timestamp }) =>
   ipcCommonClient(
     {
       requestEventName: 'request.chat.sendmsg',
       responseEventName: 'response.chat.sendmsg'
     },
-    { touid, message }
+    { touid, message, timestamp }
   )
 
 export const ReceiveMessage = () => {
