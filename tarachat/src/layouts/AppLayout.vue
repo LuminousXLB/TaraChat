@@ -47,6 +47,7 @@
           ['unordered', 'ordered', 'outdent', 'indent']
         ]"
         :content-style="{ 'height': '80px', 'overflow-y': 'scroll' }"
+        ref="editor"
       ></q-editor>
       <q-toolbar color="secondary">
         <q-toolbar-title></q-toolbar-title>
@@ -108,6 +109,9 @@ export default {
         timestamp
       })
 
+      this.input = ''
+      this.$refs.editor.$el.children[1].focus()
+
       SendMessage({
         touid: this.onchat.uid,
         message,
@@ -133,7 +137,7 @@ export default {
   },
   mounted () {
     ipcRenderer.on('broadcast.online', (event, arg) => {
-      this.onlineusers.push(arg)
+      this.$set(this.onlineusers, arg.uid, arg.nickname)
       this.fetchAvatar(arg.nickname)
     })
 
@@ -152,11 +156,6 @@ export default {
         this.fetchAvatar(nickname)
       }
     })
-  },
-  watch: {
-    chats (val, oval) {
-      console.log(val)
-    }
   }
 }
 </script>

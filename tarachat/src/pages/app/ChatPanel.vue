@@ -42,11 +42,6 @@ export default {
     Avatar('me').then(({ uri, arg }) => {
       this.avatarMe = uri
     })
-  },
-  watch: {
-    chats (val, oval) {
-      console.log(val)
-    }
   }
 }
 </script>
