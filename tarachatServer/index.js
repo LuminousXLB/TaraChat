@@ -1,5 +1,6 @@
 const server = require('http').createServer()
 const io = require('socket.io')(server)
+const ss = require('socket.io-stream')
 const pg = require('./db/postgres')
 // const crypto = require('crypto')
 const logger = require('log4js').getLogger(__filename)
@@ -92,15 +93,18 @@ io.on('connection', socket => {
   })
 
   socket.on('q.auth.logout', () => {
+    const rEvent = 'r.auth.logout'
+
     const { uid, nickname } = socket
     delete UID2SOCKETID[socket.uid]
-    socket.emit('r.auth.logout', true)
+    socket.emit(rEvent, true)
     socket.broadcast.emit('broadcast.offline', { uid, nickname })
   })
 
   // q.chat Listener
   socket.on('q.chat.onlineusers', () => {
     const rEvent = 'r.chat.onlineusers'
+
     if (Object.keys(UID2SOCKETID).length > 0) {
       pg.query(
         `SELECT uid, nickname FROM users WHERE uid IN (${Object.keys(
@@ -118,23 +122,68 @@ io.on('connection', socket => {
         })
     } else {
       socket.emit(rEvent, true, {
-        uid,
-        nickname,
         onlineusers: []
       })
     }
   })
 
-  socket.on('q.chat.sendmsg', ({ touid, message, digest }) => {
-    socket
-      .to(UID2SOCKETID[touid])
-      .emit('q.chat.receivemsg', { fromuid: socket.uid, message, digest })
+  socket.on('q.chat.sendmsg', ({ touid, message, digest, timestamp }) => {
+    logger.info(
+      'q.chat.sendmsg',
+      `[${socket.uid}-${socket.nickname}]`,
+      touid,
+      message
+    )
+    socket.to(UID2SOCKETID[touid]).emit('q.chat.receivemsg', {
+      fromuid: socket.uid,
+      touid,
+      message,
+      digest,
+      timestamp
+    })
   })
 
   socket.on('r.chat.receivemsg', ({ fromuid, digest }) => {
+    logger.info(
+      'r.chat.receivemsg',
+      `[${socket.uid}-${socket.nickname}]`,
+      fromuid
+    )
     socket
       .to(UID2SOCKETID[fromuid])
       .emit('r.chat.sendmsg', { touid: socket.uid, digest })
+  })
+
+  ss(socket).on('q.chat.sendfile', (instream, payload) => {
+    const { touid, name, size, digest } = payload
+    logger.info(
+      'q.chat.sendfile',
+      `[${socket.uid}-${socket.nickname}]`,
+      touid,
+      digest
+    )
+    
+    const outstream = ss.createStream()
+    ss(socket.to(UID2SOCKETID[touid])).emit('q.chat.receivefile', outstream, {
+      fromuid: socket.uid,
+      touid,
+      name,
+      size,
+      digest
+    })
+    instream.pipe(outstream)
+  })
+
+  socket.on('r.chat.receivefile', ({ fromuid, digest }) => {
+    logger.info(
+      'r.chat.receivefile',
+      `[${socket.uid}-${socket.nickname}]`,
+      touid,
+      digest
+    )
+    socket
+      .to(UID2SOCKETID[fromuid])
+      .emit('r.chat.sendfile', { touid: socket.uid, digest })
   })
 
   // common Listener
